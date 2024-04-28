@@ -1,5 +1,5 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
-/** import forms from '@tailwindcss/forms'; */
+import forms from '@tailwindcss/forms';
 /** @type {import('tailwindcss').Config} */
 const colors = require('tailwindcss/colors');
 
@@ -28,5 +28,5 @@ export default {
         },
     },
 
-    plugins: [ /* forms */],
+    plugins: [forms],
 };

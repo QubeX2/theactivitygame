@@ -2,9 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-[type=text], [type=password], [type=email] {
-}
-
+/*
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -15,7 +13,7 @@ select:-webkit-autofill,
 select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
     @apply border-4 border-white p-2 rounded-lg font-bold;
-    /* border: 1px solid transparent !important; */
     -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
     transition: background-color 5000s ease-in-out 0s !important;
 }
+*/
