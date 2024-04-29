@@ -17,12 +17,6 @@
     <body class="sm:flex sm:justify-center font-sans antialiased sm:bg-indigo-950">
         <div class="min-h-screen bg-indigo-500">
             <livewire:layout.navigation />
-
-            <!-- Page Heading -->
-            @if (isset($header))
-                {{ $header }}
-            @endif
-
             <!-- Page Content -->
             <main>
                 {{ $slot }}
