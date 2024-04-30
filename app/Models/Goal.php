@@ -7,5 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Goal extends Model
 {
-    use HasFactory;
+    const TYPE_DAILY = 1;
+    const TYPE_WEEKLY = 2;
+    const TYPE_MONTHLY = 3;
+
 }
