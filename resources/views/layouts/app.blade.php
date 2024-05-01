@@ -14,8 +14,8 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="sm:flex sm:justify-center font-sans antialiased sm:bg-indigo-950">
-        <div class="min-h-screen bg-indigo-500">
+    <body class="sm:flex sm:justify-center font-sans antialiased bg-indigo-700">
+        <div class="min-h-screen">
             <livewire:layout.navigation />
             <!-- Page Content -->
             <main>

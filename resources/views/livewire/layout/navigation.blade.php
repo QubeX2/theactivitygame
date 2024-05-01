@@ -20,12 +20,17 @@ new class extends Component
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
-            <div class="flex">
+            <div class="flex gap-x-1">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('activities') }}" wire:navigate>
-                        <x-application-logo class="block h-14 w-auto fill-current text-gray-800" />
+                        <x-application-logo class="block h-12 w-auto fill-current" />
                     </a>
+                </div>
+
+                <!-- Status -->
+                <div class="flex grow sm:hidden">
+                    <livewire:status />
                 </div>
 
                 <!-- Navigation Links -->
@@ -39,6 +44,9 @@ new class extends Component
                     <x-nav-link :href="route('members')" icon="group" :active="request()->routeIs('members')" wire:navigate>
                         {{ __('Members') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('settings')" icon="settings" :active="request()->routeIs('settings')" wire:navigate>
+                        {{ __('Settings') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -46,7 +54,7 @@ new class extends Component
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-900 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
                             <div x-data="{{ json_encode(['name' => auth()->user()->name]) }}" x-text="name" x-on:profile-updated.window="name = $event.detail.name"></div>
 
                             <div class="ms-1">
@@ -74,7 +82,7 @@ new class extends Component
 
             <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
+                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -95,6 +103,9 @@ new class extends Component
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('members')" icon="group" :active="request()->routeIs('members')" wire:navigate>
                 {{ __('Members') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('settings')" icon="group" :active="request()->routeIs('settings')" wire:navigate>
+                {{ __('Settings') }}
             </x-responsive-nav-link>
         </div>
 

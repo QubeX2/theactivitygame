@@ -1,11 +1,15 @@
 <?php
 
 use Livewire\Volt\Component;
+use Livewire\Attributes\Layout;
 
-new class extends Component {
-    //
+new #[Layout('layouts.app')] class extends Component {
 }; ?>
 
-<div>
-    //
+<div class="p-2">
+    <h1 class="font-xl font-bold">TODO</h1>
+    <ul class="">
+        <li>INVITE MEMBER</li>
+        <li>EDIT MEMBERS</li>
+    </ul>
 </div>

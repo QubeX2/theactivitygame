@@ -17,6 +17,7 @@ Route::middleware('auth')->group(function () {
     Volt::route('activities', 'pages.activities')->name('activities');
     Volt::route('history', 'pages.history')->name('history');
     Volt::route('members', 'pages.members')->name('members');
+    Volt::route('settings', 'pages.settings')->name('settings');
     Route::view('profile', 'profile')->name('profile');
 });
 

@@ -1,4 +1,5 @@
-<button wire:click="addActivity({{$id}})" type="button" class="border-4 border-white bg-red-500 px-3 text-nowrap rounded-full flex gap-x-1 text-2xl items-center justify-center content-center">
+<button wire:click="addActivity({{$id}})" type="button"
+        class="tag">
     <span class="flex">
         @for($i = 1; $i <= $points; $i++)
             <svg viewBox="0 0 24 24" width="25" fill="yellow" stroke="black" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
