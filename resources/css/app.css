@@ -7,6 +7,19 @@
     @apply bg-gradient-to-b from-red-200 from-10% via-red-500 via-70% to-red-700 to-90% flex gap-x-1;
 }
 
+.button {
+    @apply rounded-lg px-2 w-40 text-lg text-black font-bold border-2 border-black;
+}
+
+.button-green {
+    @apply bg-green-500;
+}
+
+.button-yellow {
+    @apply bg-yellow-500;
+}
+
+
 /*
 input:-webkit-autofill,
 input:-webkit-autofill:hover,

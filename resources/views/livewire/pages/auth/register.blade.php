@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
+use Livewire\Attributes\Url;
+use App\Models\Invite;
+use App\Models\Member;
 
 new #[Layout('layouts.guest')] class extends Component
 {
@@ -14,6 +17,19 @@ new #[Layout('layouts.guest')] class extends Component
     public string $email = '';
     public string $password = '';
     public string $password_confirmation = '';
+
+    #[Url]
+    public string $token;
+
+    public function mount()
+    {
+        if(strlen($this->token) > 0) {
+            $invite = Invite::where('token', $this->token)->where('accepted', false)->first();
+            if($invite) {
+                $this->email = $invite->email;
+            }
+        }
+    }
 
     /**
      * Handle an incoming registration request.
@@ -29,6 +45,16 @@ new #[Layout('layouts.guest')] class extends Component
         $validated['password'] = Hash::make($validated['password']);
         event(new Registered($user = User::create($validated)));
         Auth::login($user);
+
+        if(strlen($this->token) > 0) {
+            $token = Invite::where('token', $this->token)->where('accepted', false)->first();
+            $token->update(['accepted' => true]);
+            Member::create([
+                'userid' => $user->id,
+                'groupid' => $token->groupid,
+            ]);
+        }
+
         $this->redirect(route('activities', absolute: false), navigate: true);
     }
 }; ?>

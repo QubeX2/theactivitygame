@@ -54,7 +54,7 @@ new #[Layout('layouts.app')] class extends Component {
                 <option value="{{\App\Models\Goal::TYPE_WEEKLY}}">{{__('per week')}}</option>
                 <option value="{{\App\Models\Goal::TYPE_MONTHLY}}">{{__('per month')}}</option>
             </select>
-            <button type="button" wire:click="saveGoal" class="rounded-lg bg-green-500 px-2 w-20 text-lg font-bold border-2 border-black">Save</button>
+            <button type="button" wire:click="saveGoal" class="button button-green">Save</button>
         </div>
     @endif
 </div>
