@@ -9,6 +9,7 @@ use App\Models\History;
 new #[Layout('layouts.app')] class extends Component {
     public $search = '';
     public $tags = [];
+    public $members = [];
 
     public function mount()
     {
@@ -16,6 +17,7 @@ new #[Layout('layouts.app')] class extends Component {
             return redirect()->route('settings');
         }
         $this->refreshTags();
+        $this->refreshMembers();
     }
 
     public function updatedSearch()
@@ -23,14 +25,16 @@ new #[Layout('layouts.app')] class extends Component {
         $this->refreshTags();
     }
 
+    public function refreshMembers()
+    {
+    }
+
     public function refreshTags()
     {
-        $this->search = trim($this->search);
-        $query = Activity::with([
-            'history' => fn($q) => $q->whereRaw('created_at >= now() - interval 1 day')->where('userid', auth()->id())
-        ]);
-        if(strlen($this->search) > 0) {
-            $query->where('name', 'like', "%{$this->search}%");
+        $search = trim($this->search);
+        $query = Activity::with(['history' => fn($q) => $q->whereRaw('current_date() = date(created_at)')->where('userid', auth()->user()->id)]);
+        if(strlen($search) > 0) {
+            $query->where('name', 'like', "%{$search}%");
         }
         $this->tags = $query->orderBy('touched', 'desc')->limit(10)->get()->toArray();
     }
@@ -45,6 +49,7 @@ new #[Layout('layouts.app')] class extends Component {
             'points' => $activity->points,
         ]);
         $this->searh = '';
+        $this->dispatch('refresh-points');
         $this->refreshTags();
     }
 
@@ -63,26 +68,20 @@ new #[Layout('layouts.app')] class extends Component {
 }; ?>
 
 <div class="bg-indigo-500 min-h-screen p-2">
-    <form x-data x-init="$refs.search.focus()" class="mt-2 flex flex-col w-full gap-y-2">
+    <form class="mt-2 flex flex-col w-full gap-y-2">
         <div class="hidden sm:flex w-full justify-center"><livewire:status /></div>
         @if(auth()->user()->goalFullfilled())
             <div class="flex flex-col w-full justify-center">
                 <div class="text-white font-bold text-2xl text-center">{{__('Well done!!')}}</div>
                 <div class="text-white font-bold text-2xl text-center">{{__('Nothing to do right now.')}}</div>
-                <div class="text-white font-bold text-2xl text-center">{{__('Goal is fullfilled.')}}</div>
             </div>
         @else
-            <div class="flex w-full justify-center">
-                <input x-ref="search" maxlength="14" class="w-80 rounded-lg border-b-2 border-white text-2xl font-bold"
-                       type="search" wire:model.live.debounce.150ms="search" placeholder="{{__('Search tags...')}}">
-            </div>
-            @if(sizeof($tags) === 0 && strlen($this->search) > 0)
+            @if(strlen($this->search) >= 2 && collect($tags)->filter(fn($tag) => $tag['name'] === mb_strtoupper($this->search))->isEmpty())
                 <div class="flex flex-col gap-1 justify-center items-center w-full p-2 rounded-lg">
-                    <div class="text-white font-bold text-2xl">{{__('Tag is missing create it?')}}</div>
                     <div class="border-4 border-white bg-red-500 h-10 px-2 pt-1 text-nowrap rounded-full flex gap-x-1 text-2xl items-center justify-center content-center">
                         <span class="font-bold">{{mb_strtoupper($this->search)}}</span>
                     </div>
-                    <div class="text-white font-bold text-2xl">{{__('Click one of the points to save')}}</div>
+                    <div class="text-white font-bold text-2xl text-center">{{__('Is missing, click a point to add!')}}</div>
                     <div class="flex gap-x-1">
                         @for($i = 1; $i <= 5; $i++)
                             <button wire:key="point-{{$i}}" wire:click="saveTag({{$i}})" type="button" class="cursor-pointer">
@@ -100,13 +99,18 @@ new #[Layout('layouts.app')] class extends Component {
             @endif
             <ul class="flex flex-col gap-y-1">
                 @foreach ($tags as $tag)
-                    @if(!sizeof($tag['history']))
+                    @if(empty($tag['history']))
                         <li wire:key="tag-{{$tag['id']}}" class="flex justify-center items-center rounded-lg py-1">
                             <x-tag :points="$tag['points']" :id="$tag['id']" :name="$tag['name']" />
                         </li>
                     @endif
                 @endforeach
             </ul>
+            <div x-data x-init="$refs.search.focus()" class="fixed left-0 bottom-2 flex w-full justify-center">
+                <input x-ref="search" maxlength="14" class="w-80 rounded-lg border-b-2 border-white text-2xl font-bold"
+                       type="search" wire:model.live.debounce.150ms="search" placeholder="{{__('Search tag')}}">
+            </div>
         @endif
+
     </form>
 </div>

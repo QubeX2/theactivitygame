@@ -19,13 +19,13 @@ class Goal extends Model
         return $this->belongsTo(Group::class, 'groupid');
     }
 
-    public function getText($points = 0): string
+    public function getTypeText(): string
     {
         $list = [
-            self::TYPE_DAILY => __('a day'),
-            self::TYPE_WEEKLY => __('a week'),
-            self::TYPE_MONTHLY => __('a month'),
+            self::TYPE_DAILY => __('daily'),
+            self::TYPE_WEEKLY => __('weekly'),
+            self::TYPE_MONTHLY => __('monthly'),
         ];
-        return sprintf("%d %s %d&#9733; %s", $points, __('of'), $this->points, $list[$this->typeid] ?? '');
-    }
+        return $list[$this->typeid] ?? '';
+     }
 }

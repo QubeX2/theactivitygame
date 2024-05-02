@@ -14,11 +14,11 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="sm:flex sm:justify-center font-sans antialiased bg-indigo-700">
+    <body x-data x-init="window.scrollTo(0, 0)" class="sm:flex sm:justify-center font-sans antialiased bg-indigo-700">
         <div class="min-h-screen">
             <livewire:layout.navigation />
             <!-- Page Content -->
-            <main>
+            <main class="">
                 {{ $slot }}
             </main>
         </div>
