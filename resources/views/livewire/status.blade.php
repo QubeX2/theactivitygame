@@ -34,11 +34,11 @@ new class extends Component {
                {{$left}}
                <span class="text-yellow-500">&#9733;</span>
                {{__('more to the')}}
-               {{auth()->user()->group->goal->getTypeText()}}
+               {{auth()->user()->group?->goal?->getTypeText()}}
                {{__('goal')}}
            @else
                {{__('Your')}}
-               {{auth()->user()->group->goal->getTypeText()}}
+               {{auth()->user()->group?->goal?->getTypeText()}}
                {{__('goal is reached!')}}
            @endif
        </span>
