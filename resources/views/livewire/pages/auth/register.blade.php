@@ -19,7 +19,7 @@ new #[Layout('layouts.guest')] class extends Component
     public string $password_confirmation = '';
 
     #[Url]
-    public string $token;
+    public string $token = '';
 
     public function mount()
     {
