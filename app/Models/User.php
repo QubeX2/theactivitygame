@@ -78,7 +78,7 @@ class User extends Authenticatable
 
     public function getPoints()
     {
-        switch(auth()->user()->group->goal->typeid) {
+        switch(auth()->user()->group?->goal?->typeid ?? 0) {
             case Goal::TYPE_DAILY:
                 return auth()->user()->history()
                     ->whereRaw('date(created_at) = curdate()')

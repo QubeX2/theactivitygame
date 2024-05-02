@@ -13,7 +13,7 @@ new #[Layout('layouts.app')] class extends Component {
 
     public function mount()
     {
-        if(!auth()->user()->group->goal) {
+        if(!auth()->user()->group?->goal) {
             return redirect()->route('settings');
         }
         $this->refreshTags();

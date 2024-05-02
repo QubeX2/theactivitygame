@@ -15,7 +15,7 @@ new #[Layout('layouts.app')] class extends Component {
 
     public function mount()
     {
-        $goal = auth()->user()->group->goal;
+        $goal = auth()->user()->group?->goal;
         if(!auth()->user()->group) {
             $group = Group::create([
                 'ownerid' => auth()->user()->id,
