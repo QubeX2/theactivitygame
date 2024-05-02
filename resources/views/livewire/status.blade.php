@@ -15,7 +15,7 @@ new class extends Component {
     public function refreshPoints()
     {
         $this->points = auth()->user()->getPoints();
-        $this->left = auth()->user()->group->goal->points - $this->points;
+        $this->left = (auth()->user()->group?->goal?->points ?? 0) - $this->points;
     }
 
     public function getListeners()
