@@ -44,16 +44,16 @@ new #[Layout('layouts.app')] class extends Component {
     public function refreshTags()
     {
         $search = trim($this->search);
-        $query = Activity::withTrashed();
+        $query = Activity::query();
         if(strlen($search) > 0) {
             $query->where('name', 'like', "%{$search}%");
         }
-        $this->tags = $query->orderBy('deleted_at')->orderBy('touched', 'desc')->limit(10)->get()->toArray();
+        $this->tags = $query->orderBy('touched', 'desc')->limit(10)->get()->toArray();
     }
 
     public function saveTag($id, $index)
     {
-        $tag = Activity::withTrashed()->find($id);
+        $tag = Activity::find($id);
         $tag->update([
             'name' => $this->tags[$index]['name'],
             'points' => $this->tags[$index]['points'],
@@ -64,12 +64,6 @@ new #[Layout('layouts.app')] class extends Component {
     public function deleteTag($id)
     {
         Activity::where('id', $id)->delete();
-        $this->refreshTags();
-    }
-
-    public function restoreTag($id)
-    {
-        Activity::withTrashed()->where('id', $id)->restore();
         $this->refreshTags();
     }
 
@@ -115,11 +109,7 @@ new #[Layout('layouts.app')] class extends Component {
                     @endfor
                 </select>
                 <button wire:click="saveTag({{$tag['id']}}, {{$index}})" class="button button-green"><livewire:icon wire:key="save-{{$tag['id']}}" name="save" size="36" color="darkgreen" /></button>
-                @if($tag['deleted_at'] === null)
-                    <button type="button" wire:click="deleteTag({{$tag['id']}})" class="button button-red"><livewire:icon wire:key="delete-{{$tag['id']}}" name="delete" size="36" color="darkred" /></button>
-                @else
-                    <button type="button" wire:click="restoreTag({{$tag['id']}})" class="button button-blue"><livewire:icon wire:key="restore-{{$tag['id']}}" name="undo" size="36" color="darkblue" /></button>
-                @endif
+                <button type="button" wire:click="deleteTag({{$tag['id']}})" class="button button-red"><livewire:icon wire:key="delete-{{$tag['id']}}" name="delete" size="36" color="darkred" /></button>
             </li>
         @endforeach
     </ul>

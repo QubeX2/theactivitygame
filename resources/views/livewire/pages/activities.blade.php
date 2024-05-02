@@ -97,6 +97,10 @@ new #[Layout('layouts.app')] class extends Component {
                     </div>
                 </div>
             @endif
+                <div x-data x-init="$refs.search.focus()" class="flex w-full justify-center">
+                    <input x-ref="search" maxlength="14" class="w-80 rounded-lg border-b-2 border-white text-2xl font-bold"
+                           type="search" wire:model.live.debounce.150ms="search" placeholder="{{__('Search tag')}}">
+                </div>
             <ul class="flex flex-col gap-y-1">
                 @foreach ($tags as $tag)
                     @if(empty($tag['history']))
@@ -106,10 +110,6 @@ new #[Layout('layouts.app')] class extends Component {
                     @endif
                 @endforeach
             </ul>
-            <div x-data x-init="$refs.search.focus()" class="fixed left-0 bottom-2 flex w-full justify-center">
-                <input x-ref="search" maxlength="14" class="w-80 rounded-lg border-b-2 border-white text-2xl font-bold"
-                       type="search" wire:model.live.debounce.150ms="search" placeholder="{{__('Search tag')}}">
-            </div>
         @endif
 
     </form>
