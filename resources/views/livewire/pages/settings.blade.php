@@ -104,7 +104,7 @@ new #[Layout('layouts.app')] class extends Component {
             <li wire:key="tag-{{$tag['id']}}" class="flex gap-x-1 justify-center items-center rounded-lg py-1">
                 <x-text-input wire:model="tags.{{$index}}.name" class="font-bold" />
                 <select wire:model="tags.{{$index}}.points">
-                    @for($i = 1; $i <= 5; $i++)
+                    @for($i = 1; $i <= 3; $i++)
                         <option wire:key="point-{{$i}}" value="{{$i}}" @if($tag['points'] == $i) selected @endif>{{$i}}</option>
                     @endfor
                 </select>

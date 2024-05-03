@@ -83,7 +83,7 @@ new #[Layout('layouts.app')] class extends Component {
                     </div>
                     <div class="text-white font-bold text-2xl text-center">{{__('Is missing, click a point to add!')}}</div>
                     <div class="flex gap-x-1">
-                        @for($i = 1; $i <= 5; $i++)
+                        @for($i = 1; $i <= 3; $i++)
                             <button wire:key="point-{{$i}}" wire:click="saveTag({{$i}})" type="button" class="cursor-pointer">
                                 <svg viewBox="0 0 24 24" width="70" fill="yellow" stroke="black" stroke-width="1" xmlns="http://www.w3.org/2000/svg">
                                     <g stroke-linecap="round" stroke-linejoin="round"></g>
