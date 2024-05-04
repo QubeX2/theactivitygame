@@ -26,4 +26,9 @@ class Group extends Model
     {
         return $this->hasManyThrough(User::class, Member::class, 'groupid', 'id', 'id', 'userid');
     }
+
+    public function History(): HasMany
+    {
+        return $this->hasMany(History::class, 'groupid');
+    }
 }

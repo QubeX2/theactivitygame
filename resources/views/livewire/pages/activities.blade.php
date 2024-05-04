@@ -45,6 +45,7 @@ new #[Layout('layouts.app')] class extends Component {
         $activity->increment('touched');
         History::create([
             'userid' => auth()->user()->id,
+            'groupid' => auth()->user()->group->id,
             'activityid' => $activity->id,
             'points' => $activity->points,
         ]);

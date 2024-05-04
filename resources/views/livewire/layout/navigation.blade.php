@@ -35,16 +35,16 @@ new class extends Component
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('activities')" icon="star" :active="request()->routeIs('activities')" wire:navigate>
+                    <x-nav-link :href="route('activities')" icon="star" iconcolor="darkblue" :active="request()->routeIs('activities')" wire:navigate>
                         {{ __('Activities') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('history')" icon="clock" :active="request()->routeIs('history')" wire:navigate>
+                    <x-nav-link :href="route('history')" icon="clock" iconcolor="darkred" :active="request()->routeIs('history')" wire:navigate>
                         {{ __('History') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('members')" icon="group" :active="request()->routeIs('members')" wire:navigate>
+                    <x-nav-link :href="route('members')" icon="group" iconcolor="darkgreen" :active="request()->routeIs('members')" wire:navigate>
                         {{ __('Members') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('settings')" icon="settings" :active="request()->routeIs('settings')" wire:navigate>
+                    <x-nav-link :href="route('settings')" icon="settings" iconcolor="darkorange" :active="request()->routeIs('settings')" wire:navigate>
                         {{ __('Settings') }}
                     </x-nav-link>
                 </div>
@@ -95,16 +95,16 @@ new class extends Component
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('activities')" icon="star" :active="request()->routeIs('activities')" wire:navigate>
+            <x-responsive-nav-link :href="route('activities')" icon="star" iconcolor="darkblue" :active="request()->routeIs('activities')" wire:navigate>
                 {{ __('Activities') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('history')" icon="clock" :active="request()->routeIs('history')" wire:navigate>
+            <x-responsive-nav-link :href="route('history')" icon="clock" iconcolor="darkred" :active="request()->routeIs('history')" wire:navigate>
                 {{ __('History') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('members')" icon="group" :active="request()->routeIs('members')" wire:navigate>
+            <x-responsive-nav-link :href="route('members')" icon="group" iconcolor="darkgreen" :active="request()->routeIs('members')" wire:navigate>
                 {{ __('Members') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('settings')" icon="group" :active="request()->routeIs('settings')" wire:navigate>
+            <x-responsive-nav-link :href="route('settings')" icon="settings" iconcolor="darkorange" :active="request()->routeIs('settings')" wire:navigate>
                 {{ __('Settings') }}
             </x-responsive-nav-link>
         </div>

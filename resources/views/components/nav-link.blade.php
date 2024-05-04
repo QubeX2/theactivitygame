@@ -1,4 +1,4 @@
-@props(['active', 'icon'])
+@props(['active', 'icon', 'iconcolor'])
 
 @php
 $classes = ($active ?? false)
@@ -8,7 +8,7 @@ $classes = ($active ?? false)
 
 <a {{ $attributes->merge(['class' => $classes]) }}>
     @if($icon ?? null)
-        <livewire:icon name="{{$icon}}" />
+        <livewire:icon name="{{$icon}}" color="{{$iconcolor ?? ''}}" />
     @endif
     {{ $slot }}
 </a>
