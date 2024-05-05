@@ -2,11 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Group extends Model
 {
@@ -17,9 +15,9 @@ class Group extends Model
         return $this->hasMany(User::class, 'id', 'ownerid');
     }
 
-    public function Goal(): HasOne
+    public function Goals(): HasMany
     {
-        return $this->hasOne(Goal::class, 'groupid');
+        return $this->hasMany(Goal::class, 'groupid');
     }
 
     public function Members(): HasManyThrough

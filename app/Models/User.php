@@ -61,6 +61,11 @@ class User extends Authenticatable
         return $this->hasOneThrough(Group::class, Member::class, 'userid', 'id', 'id', 'groupid');
     }
 
+    public function Goal(): HasOne
+    {
+        return $this->hasOne(Goal::class, 'userid');
+    }
+
     public function Member(): BelongsTo
     {
         return $this->belongsTo(Member::class, 'id', 'userid');
@@ -73,23 +78,23 @@ class User extends Authenticatable
 
     public function goalFullfilled(): bool
     {
-        return $this->getPoints() >= $this->group->goal->points;
+        return $this->getPoints() >= $this->goal->points;
     }
 
     public function getPoints()
     {
-        switch(auth()->user()->group?->goal?->typeid ?? 0) {
+        switch($this->goal?->typeid ?? 0) {
             case Goal::TYPE_DAILY:
-                return auth()->user()->history()
+                return $this->history()
                     ->whereRaw('date(created_at) = curdate()')
                     ->sum('points');
             case Goal::TYPE_WEEKLY:
-                return auth()->user()->history()
-                    ->whereRaw('yearweek(created_at) = yearweek(curdate())')
+                return $this->history()
+                    ->whereRaw('yearweek(created_at, 1) = yearweek(curdate(), 1)')
                     ->whereRaw('year(created_at) = year(curdate())')
                     ->sum('points');
             case Goal::TYPE_MONTHLY:
-                return auth()->user()->history()
+                return $this->history()
                     ->whereRaw('month(created_at) = month(curdate())')
                     ->whereRaw('year(created_at) = year(curdate())')
                     ->sum('points');

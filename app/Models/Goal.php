@@ -21,11 +21,16 @@ class Goal extends Model
 
     public function getTypeText(): string
     {
-        $list = [
-            self::TYPE_DAILY => __('daily'),
-            self::TYPE_WEEKLY => __('weekly'),
-            self::TYPE_MONTHLY => __('monthly'),
-        ];
-        return $list[$this->typeid] ?? '';
+        return self::typeText($this->typeid);
+     }
+
+     public static function typeText($type): string
+     {
+         $list = [
+             self::TYPE_DAILY => __('daily'),
+             self::TYPE_WEEKLY => __('weekly'),
+             self::TYPE_MONTHLY => __('monthly'),
+         ];
+         return $list[$type] ?? '';
      }
 }

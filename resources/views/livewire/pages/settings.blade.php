@@ -6,6 +6,7 @@ use App\Models\Goal;
 use App\Models\Group;
 use App\Models\Member;
 use App\Models\Activity;
+use Livewire\Attributes\Url;
 
 new #[Layout('layouts.app')] class extends Component {
     public $search = '';
@@ -13,10 +14,14 @@ new #[Layout('layouts.app')] class extends Component {
     public $typeid = Goal::TYPE_DAILY;
     public $tags = [];
 
+    #[Url(as: 'first-time')]
+    public $first;
+
     public function mount()
     {
-        $goal = auth()->user()->group?->goal;
-        if(!auth()->user()->group) {
+        $goal = auth()->user()->goal;
+        $group = auth()->user()->group;
+        if(!$group) {
             $group = Group::create([
                 'ownerid' => auth()->user()->id,
             ]);
@@ -24,13 +29,15 @@ new #[Layout('layouts.app')] class extends Component {
                 'userid' => auth()->user()->id,
                 'groupid' => $group->id,
             ]);
-            if(!$goal) {
-                $goal = Goal::create([
-                    'groupid' => $group->id,
-                    'points' => 2,
-                    'typeid' => Goal::TYPE_DAILY,
-                ]);
-            }
+        }
+        if(!$goal) {
+            $this->goals = false;
+            $goal = Goal::create([
+                'userid' => auth()->user()->id,
+                'groupid' => $group->id,
+                'points' => 2,
+                'typeid' => Goal::TYPE_DAILY,
+            ]);
         }
         $this->points = $goal->points;
         $this->typeid = $goal->typeid;
@@ -69,29 +76,29 @@ new #[Layout('layouts.app')] class extends Component {
 
     public function saveGoal()
     {
-        auth()->user()->group->goal->update([
+        auth()->user()->goal->update([
             'points' => $this->points,
             'typeid' => $this->typeid,
         ]);
-        return redirect()->route('activities');
+        if($this->first == 1) {
+            return redirect()->route('activities');
+        }
     }
 }; ?>
 
 <div class="p-2 bg-yellow-300 min-h-screen flex flex-col items-center gap-y-8">
-    @if(!auth()->user()->goal)
-        <div>
-            <h1 class="font-xl font-bold">{{__('Please set your goal to continue')}}</h1>
-            <div class="flex gap-x-1">
-                <input type="number" wire:model="points" class="w-20 text-right rounded-lg" placeholder="Points">
-                <select wire:model="typeid" class="rounded-lg">
-                    <option value="{{\App\Models\Goal::TYPE_DAILY}}">{{__('per day')}}</option>
-                    <option value="{{\App\Models\Goal::TYPE_WEEKLY}}">{{__('per week')}}</option>
-                    <option value="{{\App\Models\Goal::TYPE_MONTHLY}}">{{__('per month')}}</option>
-                </select>
-                <button type="button" wire:click="saveGoal" class="button button-green"><livewire:icon name="save" size="36" color="darkgreen" /></button>
-            </div>
+    <div>
+        <h1 class="font-xl font-bold">{{__('Please set your goal to continue')}}</h1>
+        <div class="flex gap-x-1">
+            <input type="number" wire:model="points" class="w-20 text-right rounded-lg" placeholder="Points">
+            <select wire:model="typeid" class="rounded-lg">
+                <option value="{{\App\Models\Goal::TYPE_DAILY}}">{{__('per day')}}</option>
+                <option value="{{\App\Models\Goal::TYPE_WEEKLY}}">{{__('per week')}}</option>
+                <option value="{{\App\Models\Goal::TYPE_MONTHLY}}">{{__('per month')}}</option>
+            </select>
+            <button type="button" wire:click="saveGoal" class="button button-green"><livewire:icon name="save" size="36" color="darkgreen" /></button>
         </div>
-    @endif
+    </div>
     <div>
         <h1 class="font-xl font-bold">{{__('Edit tags')}}</h1>
         <div x-data x-init="$refs.search.focus()" class="flex w-full justify-center">

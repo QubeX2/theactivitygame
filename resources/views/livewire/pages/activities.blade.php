@@ -13,8 +13,8 @@ new #[Layout('layouts.app')] class extends Component {
 
     public function mount()
     {
-        if(!auth()->user()->group?->goal) {
-            return redirect()->route('settings');
+        if(!auth()->user()->goal || !auth()->user()->group) {
+            return redirect()->route('settings', ['first-time' => true]);
         }
         $this->refreshTags();
         $this->refreshMembers();
@@ -99,7 +99,7 @@ new #[Layout('layouts.app')] class extends Component {
                 </div>
             @endif
                 <div x-data x-init="$refs.search.focus()" class="flex w-full justify-center">
-                    <input x-ref="search" maxlength="14" class="w-80 rounded-lg border-b-2 border-white text-2xl font-bold"
+                    <input x-ref="search" maxlength="14" class="w-80 rounded-lg border-b-2 border-white text-xl font-bold"
                            type="search" wire:model.live.debounce.150ms="search" placeholder="{{__('Search tag')}}">
                 </div>
             <ul class="flex flex-col gap-y-1">

@@ -6,6 +6,7 @@ use App\Models\History;
 new class extends Component {
     public $points = 0;
     public $left = 0;
+    public $group = 0;
 
     public function mount()
     {
@@ -15,7 +16,9 @@ new class extends Component {
     public function refreshPoints()
     {
         $this->points = auth()->user()->getPoints();
-        $this->left = (auth()->user()->group?->goal?->points ?? 0) - $this->points;
+        $this->left = (auth()->user()->goal?->points ?? 0) - $this->points;
+        $this->group = (auth()->user()->group?->goals()->sum('points') ?? 0)
+            - (auth()->user()->group?->members->reduce(fn($carry, $item) => $carry + $item->getPoints(), 0) ?? 0);
     }
 
     public function getListeners()
@@ -29,18 +32,33 @@ new class extends Component {
 
 <div class="px-2 flex h-14 items-center">
     <div class="font-bold text-lg sm:text-4xl">
-       <span class="flex gap-x-1 text-indigo-900 sm:text-white">
-           @if($left > 0)
-               {{$left}}
-               <span class="text-yellow-500">&#9733;</span>
-               {{__('more to the')}}
-               {{auth()->user()->group?->goal?->getTypeText()}}
-               {{__('goal')}}
-           @else
-               {{__('Your')}}
-               {{auth()->user()->group?->goal?->getTypeText()}}
-               {{__('goal is reached!')}}
-           @endif
-       </span>
+        <div class="flex flex-col">
+           <span class="flex gap-x-1 text-indigo-900 sm:text-white">
+               @if($left > 0)
+                   {{$left}}
+                   <span class="text-yellow-500">&#9733;</span>
+                   {{__('more to your')}}
+                   {{-- auth()->user()->goal?->getTypeText() --}}
+                   {{__('goal')}}
+               @else
+                   {{__('Your')}}
+                   {{-- auth()->user()->goal?->getTypeText() --}}
+                   {{__('goal is reached!')}}
+               @endif
+           </span>
+            <span class="flex gap-x-1 text-indigo-900 sm:text-white">
+               @if($group > 0)
+                    {{$group}}
+                    <span class="text-yellow-500">&#9733;</span>
+                    {{__('more to group')}}
+                    {{-- auth()->user()->goal?->getTypeText() --}}
+                    {{__('goal')}}
+                @else
+                    {{__('Group')}}
+                    {{-- auth()->user()->goal?->getTypeText() --}}
+                    {{__('goal is reached!')}}
+                @endif
+           </span>
+        </div>
     </div>
 </div>
