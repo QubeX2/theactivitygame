@@ -27,6 +27,10 @@ export default {
             ...colors
         },
     },
-
     plugins: [forms],
+    safelist: [
+        { pattern: /^bg-+/ },
+        { pattern: /^text-+/ },
+        { pattern: /^border-+/ },
+    ],
 };
