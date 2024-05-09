@@ -8,7 +8,7 @@ $classes = ($active ?? false)
 
 <a {{ $attributes->merge(['class' => $classes]) }}>
     @if($icon ?? null)
-        <livewire:icon name="{{$icon}}" color="{{$iconcolor ?? ''}}" />
+        <i class="material-icons {{$iconcolor ?? ''}}">{{$icon}}</i>
     @endif
     {{ $slot }}
 </a>

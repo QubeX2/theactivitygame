@@ -8,7 +8,20 @@
     "Activities": "Aktiviteter",
     "History": "Historik",
     "Members": "Medlemmar",
-
-
+    "Your": "Ditt",
+    "daily": "dagliga",
+    "weekly": "veckovisa",
+    "monthly": "månadsvisa",
+    "goal is": "mål är",
+    "You have": "Du har",
+    "left to do": "kvar att utföra",
+    "Search activity": "Sök aktivitet",
+    "Great, the goal is reached!": "Fantastiskt, målet är uppnått!",
+    "settings": "inställningar",
+    "Please set your goal to continue": "Vänligen sätt ditt mål för att fortsätta",
+    "Edit activities": "Redigera aktiviteter",
+    "per day": "per dag",
+    "per week": "per vecka",
+    "per month": "per månad",
     "-": "-"
 }

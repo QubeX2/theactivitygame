@@ -8,17 +8,20 @@
         <title>{{ config('app.name', 'The Activity Game') }}</title>
 
         <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;1,500;1,700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+              rel="stylesheet">
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body x-data x-init="window.scrollTo(0, 0)" class="sm:flex sm:justify-center font-sans antialiased bg-gray-200">
-        <div class="min-h-screen">
+    <body x-data x-init="window.scrollTo(0, 0)" class="sm:flex sm:justify-center font-sans antialiased bg-gray-200 text-gray-950">
+        <div class="min-h-screen sm:w-7/12">
             <livewire:layout.navigation />
             <!-- Page Content -->
-            <main class="">
+            <main class="z-10">
                 {{ $slot }}
             </main>
         </div>

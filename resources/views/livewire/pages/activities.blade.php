@@ -6,6 +6,10 @@ use App\Models\Activity;
 use App\Models\Member;
 use App\Models\History;
 
+/**
+* TODO: Show history and a diagram when done
+* TODO: Fix mandatory handling
+*/
 new #[Layout('layouts.app')] class extends Component {
     public $search = '';
     public $tags = [];
@@ -69,8 +73,7 @@ new #[Layout('layouts.app')] class extends Component {
 }; ?>
 
 <div class="min-h-screen p-2 bg-white">
-    <form class="mt-2 flex flex-col w-full gap-y-2">
-        <div class="hidden sm:flex w-full justify-center"><livewire:status /></div>
+    <form class="mt-2 flex flex-col sm:mx-auto sm:w-3/4 gap-y-2">
         @if(auth()->user()->goalFullfilled())
             <div class="flex flex-col w-full justify-center">
                 <div class="text-white font-bold text-2xl text-center">{{__('Well done!!')}}</div>
@@ -99,14 +102,14 @@ new #[Layout('layouts.app')] class extends Component {
                 </div>
             @endif
                 <div x-data x-init="$refs.search.focus()" class="flex w-full justify-center">
-                    <input x-ref="search" maxlength="14" class="w-80 rounded-lg border-b-2 border-white text-xl font-bold"
-                           type="search" wire:model.live.debounce.150ms="search" placeholder="{{__('Search tag')}}">
+                    <input x-ref="search" maxlength="14" class="w-80 rounded-lg border-b-2 border-gray-400 text-md font-bold"
+                           type="search" wire:model.live.debounce.150ms="search" placeholder="{{__('Search activity')}}">
                 </div>
             <ul class="flex flex-col gap-y-1 px-4">
                 @foreach ($tags as $tag)
                     @if(empty($tag['history']))
                         <li wire:key="tag-{{$tag['id']}}" class="rounded-lg py-1">
-                            <x-tag :points="$tag['points']" :id="$tag['id']" :name="$tag['name']" />
+                            <x-activity :mandatory="$tag['mandatory']" :points="$tag['points']" :id="$tag['id']" :name="$tag['name']" />
                         </li>
                     @endif
                 @endforeach

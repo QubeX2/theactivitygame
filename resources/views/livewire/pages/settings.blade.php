@@ -84,6 +84,14 @@ new #[Layout('layouts.app')] class extends Component {
             return redirect()->route('activities');
         }
     }
+
+    public function toggleMandatory($id)
+    {
+        $activity = Activity::find($id);
+        $activity->update([
+            'mandatory' => !$activity->mandatory,
+        ]);
+    }
 }; ?>
 
 <div class="p-2 bg-white min-h-screen flex flex-col items-center gap-y-8">
@@ -96,14 +104,14 @@ new #[Layout('layouts.app')] class extends Component {
                 <option value="{{\App\Models\Goal::TYPE_WEEKLY}}">{{__('per week')}}</option>
                 <option value="{{\App\Models\Goal::TYPE_MONTHLY}}">{{__('per month')}}</option>
             </select>
-            <button type="button" wire:click="saveGoal" class="button button-green"><livewire:icon name="save" size="36" color="darkgreen" /></button>
+            <button type="button" wire:click="saveGoal" class="button button-green w-10 flex items-center justify-center"><i class="text-3xl text-green-950 material-icons">save</i></button>
         </div>
     </div>
     <div>
-        <h1 class="font-xl font-bold">{{__('Edit tags')}}</h1>
+        <h1 class="font-xl font-bold">{{__('Edit activities')}}</h1>
         <div x-data x-init="$refs.search.focus()" class="flex w-full justify-center">
-            <input x-ref="search" maxlength="14" class="w-80 rounded-lg border-b-2 border-white text-2xl font-bold"
-                   type="search" wire:model.live.debounce.150ms="search" placeholder="{{__('Search tag')}}">
+            <input x-ref="search" maxlength="14" class="w-80 rounded-lg border-b-2 border-gray-400 text-md font-bold"
+                   type="search" wire:model.live.debounce.150ms="search" placeholder="{{__('Search activity')}}">
         </div>
     </div>
     <ul x-data class="flex flex-col gap-y-1">
@@ -115,8 +123,13 @@ new #[Layout('layouts.app')] class extends Component {
                         <option wire:key="point-{{$i}}" value="{{$i}}" @if($tag['points'] == $i) selected @endif>{{$i}}</option>
                     @endfor
                 </select>
-                <button wire:click="saveTag({{$tag['id']}}, {{$index}})" class="button button-green"><livewire:icon wire:key="save-{{$tag['id']}}" name="save" size="36" color="darkgreen" /></button>
+                <button wire:click="saveTag({{$tag['id']}}, {{$index}})" class="button button-green">
+                    <i class="text-3xl text-green-950 material-icons">save</i>
+                </button>
                 <button type="button" wire:click="deleteTag({{$tag['id']}})" class="button button-red"><livewire:icon wire:key="delete-{{$tag['id']}}" name="delete" size="36" color="darkred" /></button>
+                <button type="button" wire:click="toggleMandatory({{$tag['id']}})" class="button button-blue w-10 flex items-center justify-center">
+                    <i class="text-3xl text-blue-950 material-icons">@if($tag['mandatory']) check_box @else check_box_outline_blank @endif</i>
+                </button>
             </li>
         @endforeach
     </ul>

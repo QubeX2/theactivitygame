@@ -11,6 +11,9 @@ use Livewire\Attributes\Url;
 use App\Models\Invite;
 use App\Models\Member;
 
+/**
+* TODO: Fix to new layout
+*/
 new #[Layout('layouts.guest')] class extends Component
 {
     public string $name = '';

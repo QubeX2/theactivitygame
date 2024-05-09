@@ -22,7 +22,9 @@ new class extends Component
         <div class="flex justify-between">
             <div class="grow flex gap-x-1">
                 <div class="shrink-0 flex items-center">
-                    <x-user-icon width="64px" height="64px" />
+                    <a href="{{ route('activities') }}" wire:navigate>
+                        <x-user-icon width="64px" height="64px" />
+                    </a>
                 </div>
                 <div class="grow flex flex-col">
                     <div class="font-bold text-white">{{auth()->user()->name}}</div>
@@ -54,16 +56,16 @@ new class extends Component
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden bg-white">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('activities')" icon="star" iconcolor="darkblue" :active="request()->routeIs('activities')" wire:navigate>
+            <x-responsive-nav-link :href="route('activities')" icon="star" :active="request()->routeIs('activities')" wire:navigate>
                 {{ __('Activities') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('history')" icon="clock" iconcolor="darkred" :active="request()->routeIs('history')" wire:navigate>
+            <x-responsive-nav-link :href="route('history')" icon="history" :active="request()->routeIs('history')" wire:navigate>
                 {{ __('History') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('members')" icon="group" iconcolor="darkgreen" :active="request()->routeIs('members')" wire:navigate>
+            <x-responsive-nav-link :href="route('members')" icon="group"  :active="request()->routeIs('members')" wire:navigate>
                 {{ __('Members') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('settings')" icon="settings" iconcolor="darkorange" :active="request()->routeIs('settings')" wire:navigate>
+            <x-responsive-nav-link :href="route('settings')" icon="settings" :active="request()->routeIs('settings')" wire:navigate>
                 {{ __('Settings') }}
             </x-responsive-nav-link>
         </div>

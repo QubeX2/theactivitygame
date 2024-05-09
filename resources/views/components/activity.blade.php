@@ -1,6 +1,9 @@
-<button wire:click="addActivity({{$id}})" type="button"
-        class="text-violet-100 bg-violet-600 w-full flex gap-x-2 px-1 py-1 items-center text-left rounded shadow shadow-gray-800">
-    <span class="flex">
+@php $color = $mandatory ? 'green' : 'violet'; @endphp
+<button wire:click="addActivity({{$id}})" type="button" class="relative gap-x-2 items-center text-left py-1 px-2 flex
+    text-gray-100 bg-{{$color}}-600 w-full rounded-2xl shadow shadow-gray-800">
+    <span class="flex
+        before:absolute before:w-1/2 before:bg-{{$color}}-700 before:right-2 before:rounded-l-lg before:h-1/2 before:top-1 before:z-10
+        after:absolute after:w-1/2 after:bg-{{$color}}-700 after:h-full after:right-0 after:bottom-0 after:rounded-bl-3xl after:rounded-r-2xl">
         @for($i = 1; $i <= $points; $i++)
             <svg viewBox="0 0 24 24" width="25" fill="yellow" stroke="black" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
                 <g stroke-linecap="round" stroke-linejoin="round"></g>
@@ -8,5 +11,8 @@
             </svg>
         @endfor
     </span>
-    <span class="grow text-lg font-bold">{{$name}}</span>
+    <span class="grow text-lg font-bold z-20">{{$name}}</span>
+    @if($mandatory)
+        <i class="material-icons text-xl text-gray-100 z-20">priority_high</i>
+    @endif
 </button>

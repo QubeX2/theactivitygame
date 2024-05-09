@@ -46,7 +46,10 @@ new #[Layout('layouts.app')] class extends Component {
             <h1 class="text-2xl text-black font-bold">{{__('Invite someone')}}</h1>
             <div class="flex gap-x-1">
                 <input type="email" wire:model="email" placeholder="{{__('Email')}}" class="rounded-lg w-60" />
-                <button wire:click="inviteMember()" class="button button-yellow px-4">{{__('Invite')}}</button>
+                <button wire:click="inviteMember()" class="button button-yellow pl-1 pr-2 flex items-center">
+                    <i class="material-icons w-8 flex items-center justify-center text-xl text-red-950">person_add</i>
+                    {{__('Invite')}}
+                </button>
             </div>
         @endif
         @if(sizeof($invitations))
@@ -56,7 +59,7 @@ new #[Layout('layouts.app')] class extends Component {
                     <div class="flex gap-x-1">
                         <span class="basis-3/4 font-xl">{{$invitation['email']}}</span>
                         <button wire:confirm="Do you want to cancel this invitation?" wire:click="cancelInvitation({{$invitation['id']}})" class="button button-red">
-                            <livewire:icon name="delete" size="24" color="darkred" />
+                            <i class="material-icons w-8 flex items-center justify-center text-xl text-red-950">delete</i>
                         </button>
                     </div>
                 @endforeach
@@ -70,7 +73,7 @@ new #[Layout('layouts.app')] class extends Component {
                         <span class="basis-3/4 text-xl">{{$member['name']}}</span>
                         @if(auth()->user()->id == auth()->user()->group->ownerid)
                             <button wire:confirm="Do you want to remove this member?" wire:click="removeUser({{$member['id']}})" class="button button-red">
-                                <livewire:icon name="delete" size="24" color="darkred" />
+                                <i class="material-icons w-8 flex items-center justify-center text-xl text-red-950">delete</i>
                             </button>
                         @endif
                     </div>
