@@ -86,7 +86,7 @@ new #[Layout('layouts.app')] class extends Component {
     }
 }; ?>
 
-<div class="p-2 bg-yellow-300 min-h-screen flex flex-col items-center gap-y-8">
+<div class="p-2 bg-white min-h-screen flex flex-col items-center gap-y-8">
     <div>
         <h1 class="font-xl font-bold">{{__('Please set your goal to continue')}}</h1>
         <div class="flex gap-x-1">

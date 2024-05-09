@@ -68,7 +68,7 @@ new #[Layout('layouts.app')] class extends Component {
     }
 }; ?>
 
-<div class="bg-indigo-500 min-h-screen p-2">
+<div class="min-h-screen p-2 bg-white">
     <form class="mt-2 flex flex-col w-full gap-y-2">
         <div class="hidden sm:flex w-full justify-center"><livewire:status /></div>
         @if(auth()->user()->goalFullfilled())
@@ -102,10 +102,10 @@ new #[Layout('layouts.app')] class extends Component {
                     <input x-ref="search" maxlength="14" class="w-80 rounded-lg border-b-2 border-white text-xl font-bold"
                            type="search" wire:model.live.debounce.150ms="search" placeholder="{{__('Search tag')}}">
                 </div>
-            <ul class="flex flex-col gap-y-1">
+            <ul class="flex flex-col gap-y-1 px-4">
                 @foreach ($tags as $tag)
                     @if(empty($tag['history']))
-                        <li wire:key="tag-{{$tag['id']}}" class="flex justify-center items-center rounded-lg py-1">
+                        <li wire:key="tag-{{$tag['id']}}" class="rounded-lg py-1">
                             <x-tag :points="$tag['points']" :id="$tag['id']" :name="$tag['name']" />
                         </li>
                     @endif

@@ -15,15 +15,14 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans text-gray-900 antialiased">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-indigo-500">
-            <h1 class="w-full text-center font-bold text-2xl text-white">{{__('Welcome to The Activity Game')}}!</h1>
-            <div class="mt-4">
+        <div class="min-h-screen flex flex-col sm:pt-20 items-center pt-6 bg-gradient-to-b from-red-500 via-red-700 to-violet-800">
+            <div class="mb-4">
                 <a href="/" wire:navigate>
-                    <x-application-logo class="w-30 h-30 fill-current text-gray-50" />
+                    <x-application-logo class="w-20 h-20 fill-current" />
                 </a>
             </div>
-
-            <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden rounded-3xl">
+            <h1 class="w-full text-center font-bold text-2xl text-white">{{__('Welcome to The Activity Game')}}!</h1>
+            <div class="w-full sm:max-w-md mt-6 px-6 py-4 overflow-hidden rounded-3xl">
                 {{ $slot }}
             </div>
         </div>

@@ -40,7 +40,7 @@ new #[Layout('layouts.app')] class extends Component {
     }
 }; ?>
 
-<div class="p-2 bg-green-500 min-h-screen sm:px-10">
+<div class="p-2 bg-white min-h-screen sm:px-10">
     <form class="flex flex-col gap-y-4 w-full">
         @if(auth()->id() == auth()->user()->group->ownerid)
             <h1 class="text-2xl text-black font-bold">{{__('Invite someone')}}</h1>

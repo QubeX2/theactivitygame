@@ -1,5 +1,5 @@
 <button wire:click="addActivity({{$id}})" type="button"
-        class="tag">
+        class="text-violet-100 bg-violet-600 w-full flex gap-x-2 px-1 py-1 items-center text-left rounded shadow shadow-gray-800">
     <span class="flex">
         @for($i = 1; $i <= $points; $i++)
             <svg viewBox="0 0 24 24" width="25" fill="yellow" stroke="black" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
@@ -8,5 +8,5 @@
             </svg>
         @endfor
     </span>
-    <span class="font-bold">{{$name}}</span>
+    <span class="grow text-lg font-bold">{{$name}}</span>
 </button>

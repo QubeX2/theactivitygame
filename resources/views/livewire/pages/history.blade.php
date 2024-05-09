@@ -23,7 +23,7 @@ new #[Layout('layouts.app')] class extends Component {
     }
 }; ?>
 
-<div class="p-2 bg-red-300 min-h-screen flex flex-col">
+<div class="p-2 bg-white min-h-screen flex flex-col">
     <h1 class="text-2xl font-bold">{{__('History')}}</h1>
     <ul class="flex flex-col">
         @foreach($users as $user)
