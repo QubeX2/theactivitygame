@@ -78,7 +78,7 @@ class User extends Authenticatable
 
     public function getInfo(): object
     {
-        return (object)[
+        $info = (object)[
             'userid' => $this->id,
             'groupid' => $this->group?->id ?? 0,
             'points' => $this->getPoints(),
@@ -88,9 +88,16 @@ class User extends Authenticatable
             'left' => max(0, ($this->goal?->points - $this->getPoints() ?? 0)),
             'mandatory' => Activity::whereDoesntHave('history', fn($q) => $q->today()->userItems($this->id))
                 ->where('groupid', ($this->group?->id ?? 0))->where('mandatory', true)->count(),
-            'weekly' => History::whereRaw('yearweek(created_at, 1) = yearweek(curdate(), 1)')
-                ->selectRaw('sum(points) as points, weekday(created_at) as day')->groupBy('day')->pluck('points', 'day')->toArray(),
+            'weekly' => [0, 0, 0, 0, 0, 0, 0],
+            'history' => History::with(['activity'])->whereRaw('date(created_at) = current_date()')
+                ->where('userid', $this->id)->orderBy('created_at')->get()->toArray(),
         ];
+        $history =History::whereRaw('yearweek(created_at, 1) = yearweek(curdate(), 1)')
+            ->selectRaw('sum(points) as points, weekday(created_at) as day')->groupBy('day')->pluck('points', 'day')->toArray();
+        foreach($info->weekly as $day => $points) {
+            $info->weekly[$day] = (int)($history[$day] ?? 0);
+        }
+        return $info;
     }
 
     public function getPoints()

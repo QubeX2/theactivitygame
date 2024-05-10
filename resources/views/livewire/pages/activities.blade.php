@@ -13,7 +13,9 @@ use App\Models\History;
 new #[Layout('layouts.app')] class extends Component {
     public $search = '';
     public $activities = [];
+    public $points = 1;
     public $info;
+    public $history = [];
 
     public function mount()
     {
@@ -41,7 +43,11 @@ new #[Layout('layouts.app')] class extends Component {
             $query->where('mandatory', true);
         }
         $this->activities = $query->orderBy('mandatory', 'desc')->orderBy('touched', 'desc')->limit(10)->get()->toArray();
-        $this->dispatch('refresh-chart', data: $this->info->weekly);
+    }
+
+    public function refreshChart(): void
+    {
+        $this->dispatch('refresh-chart', data: array_values($this->info->weekly));
     }
 
     public function addActivity($id): void
@@ -57,18 +63,20 @@ new #[Layout('layouts.app')] class extends Component {
         $this->searh = '';
         $this->dispatch('refresh-points');
         $this->refreshTags();
+        $this->refreshChart();
     }
 
-    public function saveTag($points): void
+    public function saveActivity(): void
     {
         if(!Activity::where('name', $this->search)->exists()) {
             Activity::create([
                 'groupid' => $this->info->groupid,
                 'name' => mb_strtoupper($this->search),
-                'points' => $points,
+                'points' => $this->points,
                 'touched' => 0,
             ]);
             $this->search = '';
+            $this->points = 1;
         }
     }
 }; ?>
@@ -78,6 +86,7 @@ new #[Layout('layouts.app')] class extends Component {
 @endassets
 @script
 <script type="text/javascript">
+    let dayNames = ['{{__('Mon')}}', '{{__('Tue')}}', '{{__('Wed')}}', '{{__('Thu')}}', '{{__('Fri')}}', '{{__('Sat')}}', '{{__('Sun')}}'];
     google.charts.load('current', {'packages':['corechart']});
     google.charts.setOnLoadCallback(drawChart);
 
@@ -96,22 +105,17 @@ new #[Layout('layouts.app')] class extends Component {
         };
 
         let chart = new google.visualization.LineChart(document.getElementById('id-chart'));
+        refreshChart(chart, options, @js(array_values($this->info->weekly)));
         Livewire.on('refresh-chart', ( { data: data }) => {
             refreshChart(chart, options, data);
         });
     }
 
     function refreshChart(chart, options, data) {
-        console.log(Object.entries(data).map(e =>e.map(x => +x)))
+        let d = Object.entries(data).map(([key, value]) => [dayNames[key], value]);
         let dt = google.visualization.arrayToDataTable([
             [@js(__('Day')), @js(__('Activity points'))],
-            [@js(__('Mon')), @js($this->info->weekly[0] ?? 0)],
-            [@js(__('Tue')), @js($this->info->weekly[1] ?? 0)],
-            [@js(__('Wed')), @js($this->info->weekly[2] ?? 0)],
-            [@js(__('Thu')), @js($this->info->weekly[3] ?? 0)],
-            [@js(__('Fri')), @js($this->info->weekly[4] ?? 0)],
-            [@js(__('Sat')), @js($this->info->weekly[5] ?? 0)],
-            [@js(__('Sun')), @js($this->info->weekly[6] ?? 0)],
+            ...d
         ]);
         chart.draw(dt, options);
     }
@@ -120,29 +124,41 @@ new #[Layout('layouts.app')] class extends Component {
 <div class="min-h-screen p-2 bg-white">
     <form class="mt-2 flex flex-col sm:mx-auto gap-y-2 items-center">
         @if($this->info->left === 0)
-            <div class="flex flex-col w-full justify-center">
-                <div class="text-white font-bold text-2xl text-center">{{__('Well done!!')}}</div>
-                <div class="text-white font-bold text-2xl text-center">{{__('Nothing to do right now.')}}</div>
+            <div class="flex flex-col w-full justify-center items-center">
+                <div>
+                    <svg width="64" xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd" viewBox="0 0 512 512"><circle fill="#FBD433" transform="matrix(2.64389 -.70843 .70843 2.64389 256 256)" r="93.505"/><path fill="#40270E" d="M118.959 278.462c69.505-2.158 212.527 1.215 274.08-.171 0 165.703-274.08 181.545-274.08.171zm85.834-84.99c-30.555-23.781-59.738-23.427-87.565-.261-12.545 10.444-18.125 4.612-12.458-9.576 5.636-14.108 12.708-26.114 21.661-35.367 37.814-39.081 72.372-4.168 88.914 34.677 5.285 12.402 2.539 20.715-10.552 10.527zm191.566 0c-30.557-23.781-59.74-23.427-87.565-.261-12.544 10.444-18.127 4.612-12.46-9.576 5.636-14.108 12.708-26.114 21.661-35.367 37.814-39.081 72.371-4.168 88.917 34.677 5.282 12.402 2.535 20.715-10.553 10.527z"/><path fill="#fff" d="M118.959 278.462c69.506-6.316 212.527-2.806 274.08-.172.786 58.937-273.259 58.212-274.08.172z"/><path fill="red" d="M163.715 377.761c46.294 40.045 132.671 41.615 184.568 0-28.257-32.14-59.077-33.112-93.282-7.846-35.265-28.197-58.875-28.995-91.286 7.846z"/></svg>
+                </div>
+                <div class="font-bold text-2xl w-96 text-center">{{__('Awesome!')}}</div>
+                <div class="font-bold text-2xl w-96 text-center">{{__('There is nothing to do right now, come back tomorrow.')}}</div>
             </div>
+            <div>{{__('Todays activities')}}</div>
+            <ul class="flex flex-col gap-y-1 px-4 w-80">
+                @foreach ($this->info->history as $history)
+                    <li wire:key="history-{{$history['activity']['id']}}" class="rounded-lg py-1">
+                        <x-activity :mandatory="$history['activity']['mandatory']"
+                            :points="$history['activity']['points']" :name="$history['activity']['name']" />
+                    </li>
+                @endforeach
+            </ul>
         @else
             @if(strlen($this->search) >= 2 && collect($activities)->filter(fn($x) => $x['name'] === mb_strtoupper($this->search))->isEmpty())
                 <div class="flex flex-col gap-1 justify-center items-center w-full p-2 rounded-lg">
-                    <div class="border-4 border-white bg-red-500 h-10 px-2 pt-1 text-nowrap rounded-full flex gap-x-1 text-2xl items-center justify-center content-center">
-                        <span class="font-bold">{{mb_strtoupper($this->search)}}</span>
+                    <div class="w-80">
+                        <x-activity :points="1" :name="mb_strtoupper($this->search)" />
                     </div>
-                    <div class="text-white font-bold text-2xl text-center">{{__('Is missing, click a point to add!')}}</div>
-                    <div class="flex gap-x-1">
+                    <div class="font-bold text-2xl text-center">{{__('The activity is missing!')}}</div>
+                    <div class="flex flex-col gap-y-2">
                         @for($i = 1; $i <= 3; $i++)
-                            <button wire:key="point-{{$i}}" wire:click="saveTag({{$i}})" type="button" class="cursor-pointer">
-                                <svg viewBox="0 0 24 24" width="70" fill="yellow" stroke="black" stroke-width="1" xmlns="http://www.w3.org/2000/svg">
-                                    <g stroke-linecap="round" stroke-linejoin="round"></g>
-                                    <g>
-                                        <path d="M9.15316 5.40838C10.4198 3.13613 11.0531 2 12 2C12.9469 2 13.5802 3.13612 14.8468 5.40837L15.1745 5.99623C15.5345 6.64193 15.7144 6.96479 15.9951 7.17781C16.2757 7.39083 16.6251 7.4699 17.3241 7.62805L17.9605 7.77203C20.4201 8.32856 21.65 8.60682 21.9426 9.54773C22.2352 10.4886 21.3968 11.4691 19.7199 13.4299L19.2861 13.9372C18.8096 14.4944 18.5713 14.773 18.4641 15.1177C18.357 15.4624 18.393 15.8341 18.465 16.5776L18.5306 17.2544C18.7841 19.8706 18.9109 21.1787 18.1449 21.7602C17.3788 22.3417 16.2273 21.8115 13.9243 20.7512L13.3285 20.4768C12.6741 20.1755 12.3469 20.0248 12 20.0248C11.6531 20.0248 11.3259 20.1755 10.6715 20.4768L10.0757 20.7512C7.77268 21.8115 6.62118 22.3417 5.85515 21.7602C5.08912 21.1787 5.21588 19.8706 5.4694 17.2544L5.53498 16.5776C5.60703 15.8341 5.64305 15.4624 5.53586 15.1177C5.42868 14.773 5.19043 14.4944 4.71392 13.9372L4.2801 13.4299C2.60325 11.4691 1.76482 10.4886 2.05742 9.54773C2.35002 8.60682 3.57986 8.32856 6.03954 7.77203L6.67589 7.62805C7.37485 7.4699 7.72433 7.39083 8.00494 7.17781C8.28555 6.96479 8.46553 6.64194 8.82547 5.99623L9.15316 5.40838Z"></path>
-                                        <text x="8" y="16" fill="black" stroke-width="0" font-family="Verdana" font-weight="800" font-size="10">{{$i}}</text>
-                                    </g>
-                                </svg>
-                            </button>
+                            <label class="flex items-center w-full">
+                                <input type="radio" wire:model="points" value="{{$i}}"/>
+                                @for($j = 0; $j < $i; $j++)
+                                    <i class="material-icons text-yellow-500">star</i>
+                                @endfor
+                            </label>
                         @endfor
+                        <button wire:click="saveActivity()" class="flex items-center pl-1 pr-2 text-green-950 button button-green">
+                            <i class="material-icons">save</i> Save activity
+                        </button>
                     </div>
                 </div>
             @endif
@@ -157,8 +173,8 @@ new #[Layout('layouts.app')] class extends Component {
                     </li>
                 @endforeach
             </ul>
-            <div wire:ignore id="id-chart" class="w-full"></div>
         @endif
+        <div wire:ignore id="id-chart" class="w-full"></div>
 
     </form>
 </div>

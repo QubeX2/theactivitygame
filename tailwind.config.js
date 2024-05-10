@@ -29,17 +29,11 @@ export default {
     },
     plugins: [forms],
     safelist: [
-        { pattern: /bg-violet+/ },
-        { pattern: /bg-red+/ },
-        { pattern: /bg-green+/ },
-        { pattern: /bg-gray+/ },
-        { pattern: /text-violet+/ },
-        { pattern: /text-red+/ },
-        { pattern: /text-green+/ },
-        { pattern: /text-gray+/ },
-        { pattern: /border-violet+/ },
-        { pattern: /border-red+/ },
-        { pattern: /border-green+/ },
-        { pattern: /border-gray+/ },
+        {
+            pattern: /bg-(violet|red|green|gray)+/,
+            variants: ['before', 'after'],
+        },
+        { pattern: /text-(violet|red|green|gray)+/ },
+        { pattern: /border-(violet|red|green|gray)+/ },
     ],
 };
