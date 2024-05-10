@@ -8,7 +8,7 @@ use App\Models\History;
 
 /**
  * TODO: Show history and a diagram when done
- * TODO: Fix mandatory handling
+ * TODO: Fix data for chart
  */
 new #[Layout('layouts.app')] class extends Component {
     public $search = '';
@@ -41,7 +41,7 @@ new #[Layout('layouts.app')] class extends Component {
             $query->where('mandatory', true);
         }
         $this->activities = $query->orderBy('mandatory', 'desc')->orderBy('touched', 'desc')->limit(10)->get()->toArray();
-        $this->dispatch('refresh-chart');
+        $this->dispatch('refresh-chart', data: $this->info->weekly);
     }
 
     public function addActivity($id): void
@@ -96,14 +96,14 @@ new #[Layout('layouts.app')] class extends Component {
         };
 
         let chart = new google.visualization.LineChart(document.getElementById('id-chart'));
-        refreshChart(chart, options);
-        Livewire.on('refresh-chart', () => {
-            refreshChart(chart, options);
+        Livewire.on('refresh-chart', ( { data: data }) => {
+            refreshChart(chart, options, data);
         });
     }
 
-    function refreshChart(chart, options) {
-        let data = google.visualization.arrayToDataTable([
+    function refreshChart(chart, options, data) {
+        console.log(Object.entries(data).map(e =>e.map(x => +x)))
+        let dt = google.visualization.arrayToDataTable([
             [@js(__('Day')), @js(__('Activity points'))],
             [@js(__('Mon')), @js($this->info->weekly[0] ?? 0)],
             [@js(__('Tue')), @js($this->info->weekly[1] ?? 0)],
@@ -113,7 +113,7 @@ new #[Layout('layouts.app')] class extends Component {
             [@js(__('Sat')), @js($this->info->weekly[5] ?? 0)],
             [@js(__('Sun')), @js($this->info->weekly[6] ?? 0)],
         ]);
-        chart.draw(data, options);
+        chart.draw(dt, options);
     }
 </script>
 @endscript
