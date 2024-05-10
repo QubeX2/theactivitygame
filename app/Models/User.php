@@ -76,9 +76,21 @@ class User extends Authenticatable
         return $this->hasMany(History::class, 'userid');
     }
 
-    public function goalFullfilled(): bool
+    public function getInfo(): object
     {
-        return $this->getPoints() >= $this->goal->points;
+        return (object)[
+            'userid' => $this->id,
+            'groupid' => $this->group?->id ?? 0,
+            'points' => $this->getPoints(),
+            'goal' => $this->goal?->points ?? 0,
+            'goalType' => $this->goal?->typeid ?? 0,
+            'goalTypeText' => $this->goal?->getTypeText() ?? '',
+            'left' => max(0, ($this->goal?->points - $this->getPoints() ?? 0)),
+            'mandatory' => Activity::whereDoesntHave('history', fn($q) => $q->today()->userItems($this->id))
+                ->where('groupid', ($this->group?->id ?? 0))->where('mandatory', true)->count(),
+            'weekly' => History::whereRaw('yearweek(created_at, 1) = yearweek(curdate(), 1)')
+                ->selectRaw('sum(points) as points, weekday(created_at) as day')->groupBy('day')->pluck('points', 'day')->toArray(),
+        ];
     }
 
     public function getPoints()

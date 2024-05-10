@@ -18,7 +18,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body x-data x-init="window.scrollTo(0, 0)" class="sm:flex sm:justify-center font-sans antialiased bg-gray-200 text-gray-950">
-        <div class="min-h-screen sm:w-7/12">
+        <div class="min-h-screen w-full sm:w-3/4">
             <livewire:layout.navigation />
             <!-- Page Content -->
             <main class="z-10">

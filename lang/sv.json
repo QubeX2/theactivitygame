@@ -23,5 +23,15 @@
     "per day": "per dag",
     "per week": "per vecka",
     "per month": "per månad",
+    "Points": "Poäng",
+    "Weekly activities": "Veckans aktiviteter",
+    "Activity points": "Aktivitetspoäng",
+    "Mon": "Mån",
+    "Tue": "Tis",
+    "Wed": "Ons",
+    "Thu": "Tor",
+    "Fri": "Fre",
+    "Sat": "Lör",
+    "Sun": "Sön",
     "-": "-"
 }

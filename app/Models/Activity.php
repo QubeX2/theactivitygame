@@ -21,4 +21,9 @@ class Activity extends Model
     {
         return $this->hasMany(History::class, 'activityid');
     }
+
+    public function scopeGroup($query, $groupid)
+    {
+        return $query->where('groupid', $groupid);
+    }
 }

@@ -4,26 +4,22 @@ use Livewire\Volt\Component;
 use App\Models\History;
 
 /**
-* TODO: Fix counter of mandatory
-*/
+ * TODO: Fix counter of mandatory
+ */
 new class extends Component {
-    public $points = 0;
-    public $left = 0;
-    public $goal = 0;
+    public $info = null;
 
     public function mount()
     {
         $this->refreshPoints();
     }
 
-    public function refreshPoints()
+    public function refreshPoints(): void
     {
-        $this->points = auth()->user()->getPoints();
-        $this->left = (auth()->user()->goal?->points ?? 0) - $this->points;
-        $this->goal = auth()->user()->goal?->points;
+        $this->info = auth()->user()->getInfo();
     }
 
-    public function getListeners()
+    public function getListeners(): array
     {
         return [
             'refresh-points' => 'refreshPoints',
@@ -37,15 +33,15 @@ new class extends Component {
         <div class="flex flex-col">
             <span class="flex gap-x-1 text-sm">
                 {{__('Your')}}
-                {{auth()->user()->goal?->getTypeText()}}
+                {{$this->info->goalTypeText}}
                 {{__('goal is')}}
-                {{$this->goal}}
+                {{$this->info->goal}}
                 <span class="text-yellow-500">&#9733;</span>
             </span>
             <span class="flex gap-x-1 text-white">
-               @if($left > 0)
-                   {{__('You have')}}
-                    {{$left}}
+               @if($this->info->left > 0)
+                    {{__('You have')}}
+                    {{$this->info->left}}
                     <span class="text-yellow-500">&#9733;</span>
                     {{__('left to do')}}
                 @else

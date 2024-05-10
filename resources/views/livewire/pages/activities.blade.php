@@ -7,49 +7,50 @@ use App\Models\Member;
 use App\Models\History;
 
 /**
-* TODO: Show history and a diagram when done
-* TODO: Fix mandatory handling
-*/
+ * TODO: Show history and a diagram when done
+ * TODO: Fix mandatory handling
+ */
 new #[Layout('layouts.app')] class extends Component {
     public $search = '';
-    public $tags = [];
-    public $members = [];
+    public $activities = [];
+    public $info;
 
     public function mount()
     {
-        if(!auth()->user()->goal || !auth()->user()->group) {
+        $this->info = auth()->user()->getInfo();
+        if(!$this->info->goal || !$this->info->groupid) {
             return redirect()->route('settings', ['first-time' => true]);
         }
         $this->refreshTags();
-        $this->refreshMembers();
     }
 
-    public function updatedSearch()
+    public function updatedSearch(): void
     {
         $this->refreshTags();
     }
 
-    public function refreshMembers()
+    public function refreshTags(): void
     {
-    }
-
-    public function refreshTags()
-    {
+        $this->info = auth()->user()->getInfo();
         $search = trim($this->search);
-        $query = Activity::with(['history' => fn($q) => $q->whereRaw('current_date() = date(created_at)')->where('userid', auth()->user()->id)]);
+        $query = Activity::whereDoesntHave('history', fn($q) => $q->today()->userItems($this->info->userid));
         if(strlen($search) > 0) {
             $query->where('name', 'like', "%{$search}%");
         }
-        $this->tags = $query->orderBy('touched', 'desc')->limit(10)->get()->toArray();
+        if($this->info->left === $this->info->mandatory) {
+            $query->where('mandatory', true);
+        }
+        $this->activities = $query->orderBy('mandatory', 'desc')->orderBy('touched', 'desc')->limit(10)->get()->toArray();
+        $this->dispatch('refresh-chart');
     }
 
-    public function addActivity($id)
+    public function addActivity($id): void
     {
         $activity = Activity::find($id);
         $activity->increment('touched');
         History::create([
-            'userid' => auth()->user()->id,
-            'groupid' => auth()->user()->group->id,
+            'userid' => $this->info->userid,
+            'groupid' => $this->info->groupid,
             'activityid' => $activity->id,
             'points' => $activity->points,
         ]);
@@ -58,11 +59,11 @@ new #[Layout('layouts.app')] class extends Component {
         $this->refreshTags();
     }
 
-    public function saveTag($points)
+    public function saveTag($points): void
     {
         if(!Activity::where('name', $this->search)->exists()) {
             Activity::create([
-                'groupid' => auth()->user()->group->id,
+                'groupid' => $this->info->groupid,
                 'name' => mb_strtoupper($this->search),
                 'points' => $points,
                 'touched' => 0,
@@ -72,15 +73,59 @@ new #[Layout('layouts.app')] class extends Component {
     }
 }; ?>
 
+@assets
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+@endassets
+@script
+<script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        let options = {
+            title: @js(__('Weekly activities')),
+            legend: { position: 'bottom' },
+            colors: ['rgb(185, 28, 28)'],
+            pointsVisible: true,
+            vAxis: {
+                viewWindow: {
+                    min: 0,
+                    max: @js($this->info->goal),
+                }
+            }
+        };
+
+        let chart = new google.visualization.LineChart(document.getElementById('id-chart'));
+        refreshChart(chart, options);
+        Livewire.on('refresh-chart', () => {
+            refreshChart(chart, options);
+        });
+    }
+
+    function refreshChart(chart, options) {
+        let data = google.visualization.arrayToDataTable([
+            [@js(__('Day')), @js(__('Activity points'))],
+            [@js(__('Mon')), @js($this->info->weekly[0] ?? 0)],
+            [@js(__('Tue')), @js($this->info->weekly[1] ?? 0)],
+            [@js(__('Wed')), @js($this->info->weekly[2] ?? 0)],
+            [@js(__('Thu')), @js($this->info->weekly[3] ?? 0)],
+            [@js(__('Fri')), @js($this->info->weekly[4] ?? 0)],
+            [@js(__('Sat')), @js($this->info->weekly[5] ?? 0)],
+            [@js(__('Sun')), @js($this->info->weekly[6] ?? 0)],
+        ]);
+        chart.draw(data, options);
+    }
+</script>
+@endscript
 <div class="min-h-screen p-2 bg-white">
-    <form class="mt-2 flex flex-col sm:mx-auto sm:w-3/4 gap-y-2">
-        @if(auth()->user()->goalFullfilled())
+    <form class="mt-2 flex flex-col sm:mx-auto gap-y-2 items-center">
+        @if($this->info->left === 0)
             <div class="flex flex-col w-full justify-center">
                 <div class="text-white font-bold text-2xl text-center">{{__('Well done!!')}}</div>
                 <div class="text-white font-bold text-2xl text-center">{{__('Nothing to do right now.')}}</div>
             </div>
         @else
-            @if(strlen($this->search) >= 2 && collect($tags)->filter(fn($tag) => $tag['name'] === mb_strtoupper($this->search))->isEmpty())
+            @if(strlen($this->search) >= 2 && collect($activities)->filter(fn($x) => $x['name'] === mb_strtoupper($this->search))->isEmpty())
                 <div class="flex flex-col gap-1 justify-center items-center w-full p-2 rounded-lg">
                     <div class="border-4 border-white bg-red-500 h-10 px-2 pt-1 text-nowrap rounded-full flex gap-x-1 text-2xl items-center justify-center content-center">
                         <span class="font-bold">{{mb_strtoupper($this->search)}}</span>
@@ -101,19 +146,18 @@ new #[Layout('layouts.app')] class extends Component {
                     </div>
                 </div>
             @endif
-                <div x-data x-init="$refs.search.focus()" class="flex w-full justify-center">
-                    <input x-ref="search" maxlength="14" class="w-80 rounded-lg border-b-2 border-gray-400 text-md font-bold"
-                           type="search" wire:model.live.debounce.150ms="search" placeholder="{{__('Search activity')}}">
-                </div>
-            <ul class="flex flex-col gap-y-1 px-4">
-                @foreach ($tags as $tag)
-                    @if(empty($tag['history']))
-                        <li wire:key="tag-{{$tag['id']}}" class="rounded-lg py-1">
-                            <x-activity :mandatory="$tag['mandatory']" :points="$tag['points']" :id="$tag['id']" :name="$tag['name']" />
-                        </li>
-                    @endif
+            <div x-data x-init="$refs.search.focus()" class="flex w-full justify-center">
+                <input x-ref="search" maxlength="14" class="w-80 rounded-lg border-b-2 border-gray-400 text-md font-bold"
+                       type="search" wire:model.live.debounce.150ms="search" placeholder="{{__('Search activity')}}">
+            </div>
+            <ul class="flex flex-col gap-y-1 px-4 w-80">
+                @foreach ($activities as $activity)
+                    <li wire:key="activity-{{$activity['id']}}" class="rounded-lg py-1">
+                        <x-activity :mandatory="$activity['mandatory']" :points="$activity['points']" :id="$activity['id']" :name="$activity['name']" />
+                    </li>
                 @endforeach
             </ul>
+            <div wire:ignore id="id-chart" class="w-full"></div>
         @endif
 
     </form>

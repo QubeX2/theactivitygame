@@ -126,7 +126,9 @@ new #[Layout('layouts.app')] class extends Component {
                 <button wire:click="saveTag({{$tag['id']}}, {{$index}})" class="button button-green">
                     <i class="text-3xl text-green-950 material-icons">save</i>
                 </button>
-                <button type="button" wire:click="deleteTag({{$tag['id']}})" class="button button-red"><livewire:icon wire:key="delete-{{$tag['id']}}" name="delete" size="36" color="darkred" /></button>
+                <button type="button" wire:click="deleteTag({{$tag['id']}})" class="button button-red">
+                    <i class="text-3xl text-red-950 material-icons">delete</i>
+                </button>
                 <button type="button" wire:click="toggleMandatory({{$tag['id']}})" class="button button-blue w-10 flex items-center justify-center">
                     <i class="text-3xl text-blue-950 material-icons">@if($tag['mandatory']) check_box @else check_box_outline_blank @endif</i>
                 </button>

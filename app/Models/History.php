@@ -26,6 +26,21 @@ class History extends Model
         return $this->belongsTo(Activity::class, 'activityid');
     }
 
+    public function scopeNotToday($query)
+    {
+        return $query->whereRaw('date(created_at) != current_date()');
+    }
+
+    public function scopeToday($query)
+    {
+        return $query->whereRaw('date(created_at) = current_date()');
+    }
+
+    public function scopeUserItems($query, $userid)
+    {
+        return $query->where('userid', $userid);
+    }
+
     public function scopeGoalType($query, $typeid = 1)
     {
         switch($typeid) {

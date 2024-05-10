@@ -54,7 +54,7 @@ new class extends Component
     </div>
 
     <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden bg-white">
+    <div :class="{ 'block': open, 'hidden': ! open }" class="hidden bg-white border-b border-b-gray-200">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('activities')" icon="star" :active="request()->routeIs('activities')" wire:navigate>
                 {{ __('Activities') }}
