@@ -21,7 +21,7 @@ new #[Layout('layouts.app')] class extends Component {
     {
         $goal = auth()->user()->goal;
         $group = auth()->user()->group;
-        if(!$group) {
+        if (!$group) {
             $group = Group::create([
                 'ownerid' => auth()->user()->id,
             ]);
@@ -30,7 +30,7 @@ new #[Layout('layouts.app')] class extends Component {
                 'groupid' => $group->id,
             ]);
         }
-        if(!$goal) {
+        if (!$goal) {
             $this->goals = false;
             $goal = Goal::create([
                 'userid' => auth()->user()->id,
@@ -45,33 +45,33 @@ new #[Layout('layouts.app')] class extends Component {
 
     public function updatedSearch()
     {
-        $this->refreshTags();
+        $this->refreshActivities();
     }
 
-    public function refreshTags()
+    public function refreshActivities()
     {
         $search = trim($this->search);
         $query = Activity::query();
-        if(strlen($search) > 0) {
+        if (strlen($search) > 0) {
             $query->where('name', 'like', "%{$search}%");
         }
         $this->tags = $query->orderBy('touched', 'desc')->limit(10)->get()->toArray();
     }
 
-    public function saveTag($id, $index)
+    public function saveActivity($id, $index)
     {
         $tag = Activity::find($id);
         $tag->update([
             'name' => $this->tags[$index]['name'],
             'points' => $this->tags[$index]['points'],
         ]);
-        $this->refreshTags();
+        $this->refreshActivities();
     }
 
-    public function deleteTag($id)
+    public function deleteActivity($id)
     {
         Activity::where('id', $id)->delete();
-        $this->refreshTags();
+        $this->refreshActivities();
     }
 
     public function saveGoal()
@@ -80,7 +80,7 @@ new #[Layout('layouts.app')] class extends Component {
             'points' => $this->points,
             'typeid' => $this->typeid,
         ]);
-        if($this->first == 1) {
+        if ($this->first == 1) {
             return redirect()->route('activities');
         }
     }
@@ -91,10 +91,11 @@ new #[Layout('layouts.app')] class extends Component {
         $activity->update([
             'mandatory' => !$activity->mandatory,
         ]);
+        $this->refreshActivities();
     }
 }; ?>
 
-<div class="p-2 bg-white min-h-screen flex flex-col items-center gap-y-8">
+<div class="p-2 bg-white min-h-screen flex flex-col items-center gap-y-8 rounded-3xl shadow shadow-gray-600">
     <div>
         <h1 class="font-xl font-bold">{{__('Please set your goal to continue')}}</h1>
         <div class="flex gap-x-1">
@@ -104,7 +105,7 @@ new #[Layout('layouts.app')] class extends Component {
                 <option value="{{\App\Models\Goal::TYPE_WEEKLY}}">{{__('per week')}}</option>
                 <option value="{{\App\Models\Goal::TYPE_MONTHLY}}">{{__('per month')}}</option>
             </select>
-            <button type="button" wire:click="saveGoal" class="button button-green w-10 flex items-center justify-center"><i class="text-3xl text-green-950 material-icons">save</i></button>
+            <button type="button" wire:click="saveGoal" class="button text-green-600 "><i>save</i></button>
         </div>
     </div>
     <div>
@@ -117,20 +118,21 @@ new #[Layout('layouts.app')] class extends Component {
     <ul x-data class="flex flex-col gap-y-1">
         @foreach ($tags as $index => $tag)
             <li wire:key="tag-{{$tag['id']}}" class="flex gap-x-1 justify-center items-center rounded-lg py-1">
-                <x-text-input wire:model="tags.{{$index}}.name" class="font-bold" />
-                <select wire:model="tags.{{$index}}.points">
+                <x-text-input wire:model="tags.{{$index}}.name" class="font-bold"/>
+                <select wire:model="tags.{{$index}}.points" class="rounded-lg">
                     @for($i = 1; $i <= 3; $i++)
                         <option wire:key="point-{{$i}}" value="{{$i}}" @if($tag['points'] == $i) selected @endif>{{$i}}</option>
                     @endfor
                 </select>
-                <button wire:click="saveTag({{$tag['id']}}, {{$index}})" class="button button-green">
-                    <i class="text-3xl text-green-950 material-icons">save</i>
+                <button wire:click="saveActivity({{$tag['id']}}, {{$index}})" class="button text-green-600">
+                    <i>save</i>
                 </button>
-                <button type="button" wire:click="deleteTag({{$tag['id']}})" class="button button-red">
-                    <i class="text-3xl text-red-950 material-icons">delete</i>
+                <button type="button" wire:click="deleteActivity({{$tag['id']}})" wire:confirm="{{__('Are sure you want to remove this activity?')}}"
+                        class="button text-red-700">
+                    <i>delete</i>
                 </button>
-                <button type="button" wire:click="toggleMandatory({{$tag['id']}})" class="button button-blue w-10 flex items-center justify-center">
-                    <i class="text-3xl text-blue-950 material-icons">@if($tag['mandatory']) check_box @else check_box_outline_blank @endif</i>
+                <button type="button" wire:click="toggleMandatory({{$tag['id']}})" class="button text-violet-600">
+                    <i>@if($tag['mandatory']) check_box @else check_box_outline_blank @endif</i>
                 </button>
             </li>
         @endforeach

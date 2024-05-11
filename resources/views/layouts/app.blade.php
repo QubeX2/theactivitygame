@@ -21,7 +21,7 @@
         <div class="min-h-screen w-full sm:w-3/4">
             <livewire:layout.navigation />
             <!-- Page Content -->
-            <main class="z-10">
+            <main class="z-10 mt-4 shadow">
                 {{ $slot }}
             </main>
         </div>

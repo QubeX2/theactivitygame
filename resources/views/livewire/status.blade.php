@@ -4,7 +4,7 @@ use Livewire\Volt\Component;
 use App\Models\History;
 
 /**
- * TODO: Fix counter of mandatory
+ *
  */
 new class extends Component {
     public $info = null;

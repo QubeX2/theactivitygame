@@ -7,8 +7,7 @@ use App\Models\Member;
 use App\Models\History;
 
 /**
- * TODO: Show history and a diagram when done
- * TODO: Fix data for chart
+ * TODO: Fix design for chart
  */
 new #[Layout('layouts.app')] class extends Component {
     public $search = '';
@@ -23,15 +22,15 @@ new #[Layout('layouts.app')] class extends Component {
         if(!$this->info->goal || !$this->info->groupid) {
             return redirect()->route('settings', ['first-time' => true]);
         }
-        $this->refreshTags();
+        $this->refreshActivities();
     }
 
     public function updatedSearch(): void
     {
-        $this->refreshTags();
+        $this->refreshActivities();
     }
 
-    public function refreshTags(): void
+    public function refreshActivities(): void
     {
         $this->info = auth()->user()->getInfo();
         $search = trim($this->search);
@@ -42,7 +41,7 @@ new #[Layout('layouts.app')] class extends Component {
         if($this->info->left === $this->info->mandatory) {
             $query->where('mandatory', true);
         }
-        $this->activities = $query->orderBy('mandatory', 'desc')->orderBy('touched', 'desc')->limit(10)->get()->toArray();
+        $this->activities = $query->orderBy('mandatory', 'desc')->orderBy('touched', 'desc')->limit(5)->get()->toArray();
     }
 
     public function refreshChart(): void
@@ -55,6 +54,7 @@ new #[Layout('layouts.app')] class extends Component {
         $activity = Activity::find($id);
         $activity->increment('touched');
         History::create([
+            'name' => $activity->name,
             'userid' => $this->info->userid,
             'groupid' => $this->info->groupid,
             'activityid' => $activity->id,
@@ -62,7 +62,7 @@ new #[Layout('layouts.app')] class extends Component {
         ]);
         $this->searh = '';
         $this->dispatch('refresh-points');
-        $this->refreshTags();
+        $this->refreshActivities();
         $this->refreshChart();
     }
 
@@ -94,8 +94,12 @@ new #[Layout('layouts.app')] class extends Component {
         let options = {
             title: @js(__('Weekly activities')),
             legend: { position: 'bottom' },
-            colors: ['rgb(185, 28, 28)'],
+            colors: ['rgb(234, 179, 8)'],
             pointsVisible: true,
+            pointShape: 'star',
+            pointSize: 30,
+            lineWidth: 0,
+            backgroundColor: 'transparent',
             vAxis: {
                 viewWindow: {
                     min: 0,
@@ -112,7 +116,8 @@ new #[Layout('layouts.app')] class extends Component {
     }
 
     function refreshChart(chart, options, data) {
-        let d = Object.entries(data).map(([key, value]) => [dayNames[key], value]);
+        let d = Object.entries(data).map(([key, value]) => [dayNames[key], value === 0 ? null : value]);
+
         let dt = google.visualization.arrayToDataTable([
             [@js(__('Day')), @js(__('Activity points'))],
             ...d
@@ -121,7 +126,7 @@ new #[Layout('layouts.app')] class extends Component {
     }
 </script>
 @endscript
-<div class="min-h-screen p-2 bg-white">
+<div class="min-h-screen p-2 bg-white rounded-3xl shadow shadow-gray-600">
     <form class="mt-2 flex flex-col sm:mx-auto gap-y-2 items-center">
         @if($this->info->left === 0)
             <div class="flex flex-col w-full justify-center items-center">
@@ -131,15 +136,6 @@ new #[Layout('layouts.app')] class extends Component {
                 <div class="font-bold text-2xl w-96 text-center">{{__('Awesome!')}}</div>
                 <div class="font-bold text-2xl w-96 text-center">{{__('There is nothing to do right now, come back tomorrow.')}}</div>
             </div>
-            <div>{{__('Todays activities')}}</div>
-            <ul class="flex flex-col gap-y-1 px-4 w-80">
-                @foreach ($this->info->history as $history)
-                    <li wire:key="history-{{$history['activity']['id']}}" class="rounded-lg py-1">
-                        <x-activity :mandatory="$history['activity']['mandatory']"
-                            :points="$history['activity']['points']" :name="$history['activity']['name']" />
-                    </li>
-                @endforeach
-            </ul>
         @else
             @if(strlen($this->search) >= 2 && collect($activities)->filter(fn($x) => $x['name'] === mb_strtoupper($this->search))->isEmpty())
                 <div class="flex flex-col gap-1 justify-center items-center w-full p-2 rounded-lg">
@@ -156,14 +152,14 @@ new #[Layout('layouts.app')] class extends Component {
                                 @endfor
                             </label>
                         @endfor
-                        <button wire:click="saveActivity()" class="flex items-center pl-1 pr-2 text-green-950 button button-green">
-                            <i class="material-icons">save</i> Save activity
+                        <button wire:click="saveActivity()" class="button button-green">
+                            <i>save</i> Save activity
                         </button>
                     </div>
                 </div>
             @endif
             <div x-data x-init="$refs.search.focus()" class="flex w-full justify-center">
-                <input x-ref="search" maxlength="14" class="w-80 rounded-lg border-b-2 border-gray-400 text-md font-bold"
+                <input x-ref="search" maxlength="16" class="w-80 rounded-lg border-b-2 border-gray-400 text-md font-bold"
                        type="search" wire:model.live.debounce.150ms="search" placeholder="{{__('Search activity')}}">
             </div>
             <ul class="flex flex-col gap-y-1 px-4 w-80">
@@ -174,7 +170,15 @@ new #[Layout('layouts.app')] class extends Component {
                 @endforeach
             </ul>
         @endif
-        <div wire:ignore id="id-chart" class="w-full"></div>
+        <div>{{__('Todays activities')}}</div>
+        <ul class="flex flex-col gap-y-1 px-4 w-80">
+            @foreach ($this->info->history as $index => $history)
+                <li wire:key="history-{{$index}}" class="rounded-lg py-1">
+                    <x-activity :points="$history['points']" :name="$history['name']" />
+                </li>
+            @endforeach
+        </ul>
+        <div wire:ignore id="id-chart" class="bg-white rounded-xl shadow shadow-gray-400 w-full sm:w-3/4"></div>
 
     </form>
 </div>

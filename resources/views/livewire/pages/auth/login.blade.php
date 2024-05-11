@@ -69,16 +69,20 @@ new #[Layout('layouts.guest')] class extends Component
             </label>
         </div>
 
-        <div class="flex items-center justify-end mt-4 w-64">
+        <div class="flex items-center justify-between mt-4 w-64">
             @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-200 hover:text-white rounded-md focus:outline-none" href="{{ route('password.request') }}" wire:navigate>
+                <a class="underline text-sm text-gray-200" href="{{ route('password.request') }}" wire:navigate>
                     {{ __('Forgot your password?') }}
                 </a>
             @endif
-
             <x-primary-button class="ms-3 bg-black text-white">
                 {{ __('Log in') }}
             </x-primary-button>
+        </div>
+        <div class="flex items-center justify-start mt-4 w-64">
+            <a class="underline text-sm text-gray-200" href="{{ route('register') }}" wire:navigate>
+                {{ __('Register') }}
+            </a>
         </div>
     </form>
 </div>

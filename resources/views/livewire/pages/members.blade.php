@@ -40,15 +40,14 @@ new #[Layout('layouts.app')] class extends Component {
     }
 }; ?>
 
-<div class="p-2 bg-white min-h-screen sm:px-10">
+<div class="p-2 bg-white min-h-screen sm:px-10 rounded-3xl shadow shadow-gray-600">
     <form class="flex flex-col gap-y-4 w-full">
         @if(auth()->id() == auth()->user()->group->ownerid)
             <h1 class="text-2xl text-black font-bold">{{__('Invite someone')}}</h1>
             <div class="flex gap-x-1">
-                <input type="email" wire:model="email" placeholder="{{__('Email')}}" class="rounded-lg w-60" />
-                <button wire:click="inviteMember()" class="button button-yellow pl-1 pr-2 flex items-center">
-                    <i class="material-icons w-8 flex items-center justify-center text-xl text-red-950">person_add</i>
-                    {{__('Invite')}}
+                <input type="email" wire:model="email" placeholder="{{__('Email')}}" class="rounded-lg w-80" />
+                <button wire:click="inviteMember()" class="button text-violet-600">
+                    <i class="">person_add</i>
                 </button>
             </div>
         @endif
@@ -58,22 +57,22 @@ new #[Layout('layouts.app')] class extends Component {
                 @foreach($invitations as $invitation)
                     <div class="flex gap-x-1">
                         <span class="basis-3/4 font-xl">{{$invitation['email']}}</span>
-                        <button wire:confirm="Do you want to cancel this invitation?" wire:click="cancelInvitation({{$invitation['id']}})" class="button button-red">
-                            <i class="material-icons w-8 flex items-center justify-center text-xl text-red-950">delete</i>
+                        <button wire:confirm="{{__('Are you sure you want to cancel this invitation')}}?" wire:click="cancelInvitation({{$invitation['id']}})" class="button text-red-500">
+                            <i>cancel</i>
                         </button>
                     </div>
                 @endforeach
             </div>
         @endif
         <h1 class="text-2xl text-black font-bold">{{__('Members')}}</h1>
-        <div class="flex flex-col">
+        <div class="flex flex-col gap-y-1">
             @if(sizeof($members) > 0)
                 @foreach($members as $member)
-                    <div class="flex gap-x-1">
+                    <div class="flex gap-x-1 p-1">
                         <span class="basis-3/4 text-xl">{{$member['name']}}</span>
                         @if(auth()->user()->id == auth()->user()->group->ownerid)
-                            <button wire:confirm="Do you want to remove this member?" wire:click="removeUser({{$member['id']}})" class="button button-red">
-                                <i class="material-icons w-8 flex items-center justify-center text-xl text-red-950">delete</i>
+                            <button wire:confirm="{{__('Are you sure you want to remove this member')}}?" wire:click="removeUser({{$member['id']}})" class="button text-red-500">
+                                <i>delete</i>
                             </button>
                         @endif
                     </div>

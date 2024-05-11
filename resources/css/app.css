@@ -2,11 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
+.button {
+    @apply min-w-12 h-10 px-2 bg-white text-black font-bold rounded-lg flex items-center justify-center shadow shadow-gray-700;
+}
+
+.button > i {
+    @apply material-icons;
+}
+
+.button-green > i {
+    @apply text-green-700;
+}
+
+.button-red > i {
+    @apply text-red-700;
+}
+
+.button-violet > i {
+    @apply text-violet-700;
+}
+
 .material-icons {
     font-family: 'Material Icons';
     font-weight: normal;
     font-style: normal;
-    font-size: 24px;  /* Preferred icon size */
+    font-size: 36px;  /* Preferred icon size */
     display: inline-block;
     line-height: 1;
     text-transform: none;
@@ -25,26 +45,6 @@
 
     /* Support for IE. */
     font-feature-settings: 'liga';
-}
-
-.button {
-    @apply rounded-lg text-lg text-black font-bold border-2;
-}
-
-.button-green {
-    @apply bg-green-500 border-green-800;
-}
-
-.button-red {
-    @apply bg-red-500 border-red-800;
-}
-
-.button-blue {
-    @apply bg-blue-500 border-blue-800;
-}
-
-.button-yellow {
-    @apply bg-yellow-500 border-yellow-800;
 }
 
 
