@@ -178,7 +178,9 @@ new #[Layout('layouts.app')] class extends Component {
                 </li>
             @endforeach
         </ul>
-        <div wire:ignore id="id-chart" class="bg-white rounded-xl shadow shadow-gray-400 w-full sm:w-3/4"></div>
+        <div class="w-full sm:w-96">
+            <div wire:ignore id="id-chart" class="bg-white rounded-xl shadow shadow-gray-400 w-full"></div>
+        </div>
 
     </form>
 </div>
